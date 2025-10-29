@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>...</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: 'Courier New', monospace;
+            position: relative;
+        }
+
+        .container {
+            text-align: center;
+            z-index: 10;
+            animation: flicker 0.15s infinite;
+        }
+
+        .skull {
+            font-size: 15rem;
+            animation: shake 0.5s infinite, pulse 2s ease-in-out infinite;
+            filter: drop-shadow(0 0 30px #ff0000);
+        }
+
+        .text {
+            color: #ff0000;
+            font-size: 2rem;
+            margin-top: 2rem;
+            text-shadow: 0 0 20px #ff0000;
+            animation: glitch 1s infinite;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            10% { transform: translate(-2px, 2px) rotate(-1deg); }
+            20% { transform: translate(2px, -2px) rotate(1deg); }
+            30% { transform: translate(-2px, -2px) rotate(0deg); }
+            40% { transform: translate(2px, 2px) rotate(1deg); }
+            50% { transform: translate(-2px, 2px) rotate(-1deg); }
+            60% { transform: translate(2px, -2px) rotate(0deg); }
+            70% { transform: translate(-2px, -2px) rotate(-1deg); }
+            80% { transform: translate(2px, 2px) rotate(1deg); }
+            90% { transform: translate(-2px, 2px) rotate(0deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        @keyframes glitch {
+            0%, 90%, 100% {
+                transform: translate(0);
+                text-shadow: 0 0 20px #ff0000;
+            }
+            92% {
+                transform: translate(-2px, 2px);
+                text-shadow: -2px 0 20px #ff0000, 2px 0 20px #00ff00;
+            }
+            94% {
+                transform: translate(2px, -2px);
+                text-shadow: 2px 0 20px #00ff00, -2px 0 20px #ff0000;
+            }
+        }
+
+        .blood-drip {
+            position: absolute;
+            top: -10%;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, #8B0000);
+            animation: drip 3s ease-in infinite;
+        }
+
+        @keyframes drip {
+            0% { transform: translateY(-100%); opacity: 0; }
+            10% { opacity: 1; }
+            100% { transform: translateY(100vh); opacity: 0; }
+        }
+
+        .blood-drip:nth-child(1) { left: 10%; animation-delay: 0s; }
+        .blood-drip:nth-child(2) { left: 25%; animation-delay: 0.5s; }
+        .blood-drip:nth-child(3) { left: 40%; animation-delay: 1s; }
+        .blood-drip:nth-child(4) { left: 55%; animation-delay: 1.5s; }
+        .blood-drip:nth-child(5) { left: 70%; animation-delay: 2s; }
+        .blood-drip:nth-child(6) { left: 85%; animation-delay: 2.5s; }
+
+        @media (max-width: 768px) {
+            .skull {
+                font-size: 10rem;
+            }
+            .text {
+                font-size: 1.5rem;
+                padding: 0 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .skull {
+                font-size: 7rem;
+            }
+            .text {
+                font-size: 1.2rem;
+            }
+        }
+
+        .warning {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #666;
+            font-size: 0.8rem;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="blood-drip"></div>
+    <div class="blood-drip"></div>
+    <div class="blood-drip"></div>
+    <div class="blood-drip"></div>
+    <div class="blood-drip"></div>
+    <div class="blood-drip"></div>
+
+    <div class="container">
+        <div class="skull">💀</div>
+        <div class="text">YOU SHOULDN'T BE HERE</div>
+    </div>
+
+    <div class="warning">Volume warning active</div>
+
+    <!-- Audio element for the scream -->
+    <audio id="screamAudio" preload="auto">
+        <!-- Using a scream sound effect from freesound.org -->
+        <source src="scream.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // Attempt to play the scream immediately
+        const audio = document.getElementById('screamAudio');
+
+        // Try to play on load
+        window.addEventListener('load', function() {
+            audio.play().catch(function(error) {
+                console.log('Auto-play blocked by browser. Trying on first interaction...');
+            });
+        });
+
+        // Fallback: play on any interaction if auto-play was blocked
+        document.addEventListener('click', function() {
+            audio.play();
+        }, { once: true });
+
+        document.addEventListener('touchstart', function() {
+            audio.play();
+        }, { once: true });
+
+        // Additional spooky effects
+        setTimeout(function() {
+            document.querySelector('.text').textContent = 'GET OUT';
+        }, 5000);
+
+        setTimeout(function() {
+            document.querySelector('.text').textContent = 'LEAVE NOW';
+        }, 10000);
+
+        setTimeout(function() {
+            document.querySelector('.text').textContent = 'YOU WERE WARNED';
+        }, 15000);
+    </script>
+</body>
+</html>
