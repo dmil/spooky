@@ -130,9 +130,100 @@
             font-size: 0.8rem;
             opacity: 0.5;
         }
+
+        .entry-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .entry-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .enter-button {
+            background: transparent;
+            border: 2px solid #ff0000;
+            color: #ff0000;
+            font-family: 'Courier New', monospace;
+            font-size: 1.5rem;
+            padding: 20px 40px;
+            cursor: pointer;
+            text-shadow: 0 0 10px #ff0000;
+            box-shadow: 0 0 20px #ff0000;
+            animation: pulse-button 2s ease-in-out infinite, shake-button 0.3s ease-in-out infinite;
+            position: relative;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .enter-button:hover {
+            background: #ff0000;
+            color: #000;
+            transform: scale(1.05);
+        }
+
+        .enter-button:active {
+            transform: scale(0.95);
+        }
+
+        @keyframes pulse-button {
+            0%, 100% {
+                box-shadow: 0 0 20px #ff0000;
+                border-color: #ff0000;
+            }
+            50% {
+                box-shadow: 0 0 40px #ff0000, 0 0 60px #ff0000;
+                border-color: #ff3333;
+            }
+        }
+
+        @keyframes shake-button {
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(-1px, 1px); }
+            50% { transform: translate(1px, -1px); }
+            75% { transform: translate(-1px, -1px); }
+        }
+
+        .entry-text {
+            color: #666;
+            font-size: 1rem;
+            margin-bottom: 30px;
+            animation: flicker-text 0.1s infinite;
+        }
+
+        @keyframes flicker-text {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @media (max-width: 768px) {
+            .enter-button {
+                font-size: 1.3rem;
+                padding: 18px 36px;
+            }
+            .entry-text {
+                font-size: 0.9rem;
+            }
+        }
     </style>
 </head>
 <body>
+    <div class="entry-screen" id="entryScreen">
+        <div class="entry-text">Something is watching you...</div>
+        <button class="enter-button" id="enterButton">TAP IF YOU DARE</button>
+    </div>
+
     <div class="blood-drip"></div>
     <div class="blood-drip"></div>
     <div class="blood-drip"></div>
@@ -154,37 +245,39 @@
     </audio>
 
     <script>
-        // Attempt to play the scream immediately
         const audio = document.getElementById('screamAudio');
+        const entryScreen = document.getElementById('entryScreen');
+        const enterButton = document.getElementById('enterButton');
 
-        // Try to play on load
-        window.addEventListener('load', function() {
+        // Handle the entry button click
+        enterButton.addEventListener('click', function() {
+            // Play the scream
             audio.play().catch(function(error) {
-                console.log('Auto-play blocked by browser. Trying on first interaction...');
+                console.log('Audio play failed:', error);
             });
+
+            // Hide the entry screen
+            entryScreen.classList.add('hidden');
+
+            // Start the spooky text changes
+            setTimeout(function() {
+                document.querySelector('.text').textContent = 'GET OUT';
+            }, 5000);
+
+            setTimeout(function() {
+                document.querySelector('.text').textContent = 'LEAVE NOW';
+            }, 10000);
+
+            setTimeout(function() {
+                document.querySelector('.text').textContent = 'YOU WERE WARNED';
+            }, 15000);
         });
 
-        // Fallback: play on any interaction if auto-play was blocked
-        document.addEventListener('click', function() {
-            audio.play();
-        }, { once: true });
-
-        document.addEventListener('touchstart', function() {
-            audio.play();
-        }, { once: true });
-
-        // Additional spooky effects
-        setTimeout(function() {
-            document.querySelector('.text').textContent = 'GET OUT';
-        }, 5000);
-
-        setTimeout(function() {
-            document.querySelector('.text').textContent = 'LEAVE NOW';
-        }, 10000);
-
-        setTimeout(function() {
-            document.querySelector('.text').textContent = 'YOU WERE WARNED';
-        }, 15000);
+        // Also handle touch events for mobile
+        enterButton.addEventListener('touchstart', function(e) {
+            e.preventDefault(); // Prevent double-firing with click event
+            enterButton.click();
+        });
     </script>
 </body>
 </html>
